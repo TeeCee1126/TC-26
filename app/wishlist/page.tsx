@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 const wishlistItems = [
   {
     id: 1,
@@ -92,6 +94,10 @@ const wishlistItems = [
 ];
 
 export default function WishlistPage() {
+  const searchParams = useSearchParams();
+const router = useRouter();
+
+const fromConfirm = searchParams.get("from") === "confirm";
   return (
     <main className="min-h-screen bg-[#fffdf9] px-6 py-12 text-slate-800">
       <div className="mx-auto max-w-6xl">
@@ -196,7 +202,22 @@ export default function WishlistPage() {
             </Link>
           </div>
         </div>
+{fromConfirm && (
+  <div className="mx-auto mt-12 max-w-lg rounded-2xl border border-slate-200 bg-white p-6 text-center">
+    <p className="text-sm leading-6 text-slate-600">
+      You have confirmed your attendance. Would you like to choose a gift for
+      Christianah and Theophilus?
+    </p>
 
+    <button
+      type="button"
+      onClick={() => router.push("/confirmed")}
+      className="mt-5 rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+    >
+      Skip Wishlist & Continue
+    </button>
+  </div>
+)}
         <p className="mt-10 text-center text-xs leading-5 text-slate-400">
           You do not need to attend the wedding to give a gift.
         </p>
