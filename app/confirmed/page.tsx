@@ -77,11 +77,11 @@ export default function ConfirmedPage() {
 
          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
   <Link
-    href="/"
-    className="rounded-full bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700"
-  >
-    Return to Invitation
-  </Link>
+  href="/access-code"
+  className="rounded-full bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700"
+>
+  View Access Code
+</Link>
 
   <Link
     href="/wishlist"
