@@ -140,12 +140,12 @@ export default function WishlistPage() {
                   {item.description}
                 </p>
 
-                <button
-                  type="button"
-                  className="mt-5 w-full rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-                >
-                  Give This Gift
-                </button>
+               <Link
+  href={`/wishlist/${item.id}`}
+  className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+>
+  Give This Gift
+</Link>
               </div>
             </div>
           ))}
