@@ -81,7 +81,7 @@ export default function Home() {
             </p>
 
             <p className="mt-3 text-sm text-slate-600">
-              Victor — 07068364743
+              Victor — 07060629289
             </p>
 
             <p className="mt-1 text-sm text-slate-600">
