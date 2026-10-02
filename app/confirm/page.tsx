@@ -11,7 +11,7 @@ export default function ConfirmPage() {
   const [numberAttending, setNumberAttending] = useState("1");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!name.trim() || !phone.trim()) {
@@ -20,7 +20,6 @@ export default function ConfirmPage() {
 
     setIsSubmitting(true);
 
-    
     sessionStorage.setItem(
       "weddingGuest",
       JSON.stringify({
@@ -31,7 +30,7 @@ export default function ConfirmPage() {
     );
 
     router.push("/confirmed");
-  };
+  }
 
   return (
     <main className="min-h-screen bg-[#fffdf9] px-6 py-12 text-slate-800">
@@ -69,6 +68,7 @@ export default function ConfirmPage() {
 
               <input
                 id="name"
+                name="name"
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
@@ -88,10 +88,11 @@ export default function ConfirmPage() {
 
               <input
                 id="phone"
+                name="phone"
                 type="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-                placeholder="e.g. 07068364743"
+                placeholder="e.g. 08012345678"
                 required
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
               />
@@ -107,8 +108,11 @@ export default function ConfirmPage() {
 
               <select
                 id="numberAttending"
+                name="numberAttending"
                 value={numberAttending}
-                onChange={(event) => setNumberAttending(event.target.value)}
+                onChange={(event) =>
+                  setNumberAttending(event.target.value)
+                }
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition focus:border-slate-500"
               >
                 <option value="1">1 person</option>
