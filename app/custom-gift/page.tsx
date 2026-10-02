@@ -4,40 +4,40 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function CashGiftPage() {
+export default function CustomGiftPage() {
   const router = useRouter();
 
+  const [description, setDescription] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [anonymous, setAnonymous] = useState(false);
-  const [amount, setAmount] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!anonymous && !name.trim()) {
+    if (!description.trim()) {
       return;
     }
 
-    if (!amount.trim()) {
+    if (!anonymous && !name.trim()) {
       return;
     }
 
     setIsSubmitting(true);
 
     sessionStorage.setItem(
-      "cashGift",
+      "customGift",
       JSON.stringify({
-        type: "cash",
+        type: "custom",
+        description: description.trim(),
         name: anonymous ? "Anonymous" : name.trim(),
         phone: anonymous ? "" : phone.trim(),
         anonymous,
-        amount: amount.trim(),
       }),
     );
 
-    router.push("/gift-confirmed?type=cash");
+    router.push("/gift-confirmed?type=custom");
   }
 
   return (
@@ -53,48 +53,36 @@ export default function CashGiftPage() {
 
           <div className="mb-10">
             <p className="mb-3 text-xs uppercase tracking-[0.3em] text-slate-400">
-              Monetary Gift
+              Your Choice
             </p>
 
             <h1 className="font-serif text-4xl text-slate-900 sm:text-5xl">
-              Cash Gift
+              Custom Gift
             </h1>
 
             <p className="mt-5 leading-7 text-slate-600">
-              If you would like to bless us with a cash gift, you can provide
-              the details below.
-            </p>
-          </div>
-
-          <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
-              A Gift of Love
-            </p>
-
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Thank you for thinking of Christianah and Theophilus as they
-              begin this new chapter together.
+              Have something else in mind? Tell us about the gift you would
+              like to give.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
-                htmlFor="amount"
+                htmlFor="description"
                 className="mb-2 block text-sm font-medium text-slate-700"
               >
-                Gift Amount
+                What would you like to give?
               </label>
 
-              <input
-                id="amount"
-                type="number"
-                min="1"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                placeholder="Enter amount"
+              <textarea
+                id="description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder="Describe your gift..."
+                rows={5}
                 required
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
               />
             </div>
 
@@ -164,7 +152,8 @@ export default function CashGiftPage() {
             </label>
 
             <div className="rounded-xl bg-blue-50 px-4 py-4 text-sm leading-6 text-slate-600">
-              Payment details will be provided after you continue.
+              You can give this gift whether or not you are attending the
+              wedding.
             </div>
 
             <button

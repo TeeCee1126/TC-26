@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 type Gift = {
   type: string;
-  itemId?: number;
   itemName?: string;
   name: string;
   phone: string;
@@ -15,15 +15,28 @@ type Gift = {
 };
 
 export default function GiftConfirmedPage() {
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+
   const [gift, setGift] = useState<Gift | null>(null);
 
   useEffect(() => {
-    const savedGift = sessionStorage.getItem("selectedGift");
+    let storageKey = "selectedGift";
+
+    if (type === "custom") {
+      storageKey = "customGift";
+    }
+
+    if (type === "cash") {
+      storageKey = "cashGift";
+    }
+
+    const savedGift = sessionStorage.getItem(storageKey);
 
     if (savedGift) {
       setGift(JSON.parse(savedGift));
     }
-  }, []);
+  }, [type]);
 
   return (
     <main className="min-h-screen bg-[#fffdf9] px-6 py-12 text-slate-800">
@@ -61,27 +74,35 @@ export default function GiftConfirmedPage() {
               <div className="mt-4 space-y-3 text-sm text-slate-600">
                 {gift.type === "physical" && gift.itemName && (
                   <p>
-                    <span className="font-medium text-slate-800">Gift:</span>{" "}
+                    <span className="font-medium text-slate-800">
+                      Gift:
+                    </span>{" "}
                     {gift.itemName}
                   </p>
                 )}
 
                 {gift.type === "cash" && gift.amount && (
                   <p>
-                    <span className="font-medium text-slate-800">Amount:</span>{" "}
+                    <span className="font-medium text-slate-800">
+                      Amount:
+                    </span>{" "}
                     ₦{Number(gift.amount).toLocaleString()}
                   </p>
                 )}
 
                 {gift.type === "custom" && gift.description && (
                   <p>
-                    <span className="font-medium text-slate-800">Gift:</span>{" "}
+                    <span className="font-medium text-slate-800">
+                      Gift:
+                    </span>{" "}
                     {gift.description}
                   </p>
                 )}
 
                 <p>
-                  <span className="font-medium text-slate-800">Given by:</span>{" "}
+                  <span className="font-medium text-slate-800">
+                    Given by:
+                  </span>{" "}
                   {gift.anonymous ? "Anonymous" : gift.name}
                 </p>
               </div>

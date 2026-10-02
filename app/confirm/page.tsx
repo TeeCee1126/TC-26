@@ -29,7 +29,7 @@ export default function ConfirmPage() {
       }),
     );
 
-    router.push("/confirmed");
+    router.push("/wishlist?from=confirm");
   }
 
   return (
