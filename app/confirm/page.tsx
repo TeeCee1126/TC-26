@@ -92,7 +92,7 @@ export default function ConfirmPage() {
                 type="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-                placeholder="e.g. 08012345678"
+                placeholder="e.g. 07068364743"
                 required
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
               />
