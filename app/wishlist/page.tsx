@@ -50,13 +50,13 @@ const wishlistItems = [
       "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec",
   },
   {
-    id: 7,
-    name: "Generator",
-    description:
-      "A reliable generator for backup power at home.",
-    image:
-      "https://images.unsplash.com/photo-1558449033-8cf6a9b5b8d7",
-  },
+  id: 7,
+  name: "Generator",
+  description:
+    "A reliable generator for backup power at home.",
+  image:
+    "https://katakara.com.ng/public/uploads/all/lrhKwyoaT35iTkLPmjY0uQmOsrUlcbynIloVa4F0.jpg",
+},
   {
     id: 8,
     name: "Solar Set-up",
@@ -82,13 +82,13 @@ const wishlistItems = [
       "https://images.unsplash.com/photo-1585659722983-3a675dabf23d",
   },
   {
-    id: 11,
-    name: "Standing Fan",
-    description:
-      "A quality standing fan for our living space.",
-    image:
-      "https://images.unsplash.com/photo-1585789579399-4d6a0a4e2d2d",
-  },
+  id: 11,
+  name: "Standing Fan",
+  description:
+    "A quality standing fan for our living space.",
+  image:
+    "https://uae.geepas.com/cdn/shop/files/GF9605__2_8f997480-22bf-4be9-a1e0-fefbb0d7f699.jpg?crop=center&height=1200&v=1751449634&width=1200",
+},
 ];
 
 export default function WishlistPage() {
@@ -125,7 +125,7 @@ export default function WishlistPage() {
             >
               <div className="aspect-[4/3] overflow-hidden bg-slate-100">
                 <img
-                  src={`${item.image}?auto=format&fit=crop&w=800&q=80`}
+                  src={item.image}
                   alt={item.name}
                   className="h-full w-full object-cover transition duration-500 hover:scale-105"
                 />

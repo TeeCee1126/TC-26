@@ -68,13 +68,21 @@ export default function Home() {
             </div>
           </div>
 
-          <a
-            href="/confirm"
-            className="inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-4 text-sm font-medium text-white transition hover:bg-slate-700"
-          >
-            Confirm Your Attendance
-          </a>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+  <a
+    href="/confirm"
+    className="inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-4 text-sm font-medium text-white transition hover:bg-slate-700"
+  >
+    Confirm Your Attendance
+  </a>
 
+  <a
+    href="/wishlist"
+    className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-8 py-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+  >
+    View Wedding Wishlist
+  </a>
+</div>
           <div className="mt-12">
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
               RSVP

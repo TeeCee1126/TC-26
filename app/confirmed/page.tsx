@@ -11,7 +11,7 @@ type Guest = {
 
 export default function ConfirmedPage() {
   const [guest, setGuest] = useState<Guest | null>(null);
-    
+
   useEffect(() => {
     const savedGuest = sessionStorage.getItem("weddingGuest");
 
@@ -75,26 +75,21 @@ export default function ConfirmedPage() {
             </div>
           </div>
 
-          <p className="mx-auto mt-8 max-w-md text-sm leading-6 text-slate-500">
-            Before you finish, you may optionally view the couple&apos;s
-            wedding wishlist.
-          </p>
+         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+  <Link
+    href="/"
+    className="rounded-full bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700"
+  >
+    Return to Invitation
+  </Link>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/wishlist"
-              className="rounded-full bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700"
-            >
-              View Wishlist
-            </Link>
-
-            <Link
-              href="/"
-              className="rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-            >
-              Return Home
-            </Link>
-          </div>
+  <Link
+    href="/wishlist"
+    className="rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+  >
+    View Wishlist
+  </Link>
+</div>
         </div>
       </div>
     </main>
