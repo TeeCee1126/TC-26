@@ -1,15 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getStoredGuests } from "@/lib/guest-storage";
 import { GuestRecord } from "@/lib/guest";
 
 export default function AdminGuestsPage() {
+  const router = useRouter();
+
   const [guests, setGuests] = useState<GuestRecord[]>([]);
 
   useEffect(() => {
-    setGuests(getStoredGuests());
-  }, []);
+  const authenticated = sessionStorage.getItem(
+    "weddingAdminAuthenticated",
+  );
+
+  if (authenticated !== "true") {
+    router.replace("/admin/login");
+    return;
+  }
+
+  setGuests(getStoredGuests());
+}, [router]);
 
   function formatDate(date: string) {
     return new Date(date).toLocaleString("en-NG", {

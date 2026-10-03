@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   getStoredGifts,
   updateGiftStatus,
@@ -8,11 +9,21 @@ import {
 import { GiftRecord, GiftStatus } from "@/lib/gift";
 
 export default function AdminGiftsPage() {
+  const router = useRouter();
   const [gifts, setGifts] = useState<GiftRecord[]>([]);
 
   useEffect(() => {
-    setGifts(getStoredGifts());
-  }, []);
+  const authenticated = sessionStorage.getItem(
+    "weddingAdminAuthenticated",
+  );
+
+  if (authenticated !== "true") {
+    router.replace("/admin/login");
+    return;
+  }
+
+  setGifts(getStoredGifts());
+}, [router]);
 
   function getGiftDetails(gift: GiftRecord) {
     if (gift.type === "physical") {

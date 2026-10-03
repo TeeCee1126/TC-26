@@ -3,7 +3,6 @@
 import { FormEvent, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-
 import { saveGift } from "@/lib/gift-storage";
 import { GiftRecord, GiftTiming } from "@/lib/gift";
 
@@ -116,6 +115,12 @@ export default function GiftDetailsPage() {
     );
   }
 
+  // Keep these values available to the submit handler
+  // after the item existence check.
+  const itemId = item.id;
+  const itemName = item.name;
+  const itemDescription = item.description;
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -150,8 +155,8 @@ export default function GiftDetailsPage() {
 
     const gift: GiftRecord = {
       type: "physical",
-      itemId: item.id,
-      itemName: item.name,
+      itemId: itemId,
+      itemName: itemName,
       name: anonymous ? "Anonymous" : trimmedName,
       phone: anonymous ? "" : normalisedPhone,
       anonymous,
@@ -190,11 +195,11 @@ export default function GiftDetailsPage() {
             </p>
 
             <h1 className="mt-3 font-serif text-3xl text-[#172554] dark:text-white sm:text-4xl">
-              {item.name}
+              {itemName}
             </h1>
 
             <p className="mt-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
-              {item.description}
+              {itemDescription}
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -221,7 +226,9 @@ export default function GiftDetailsPage() {
                 <input
                   type="checkbox"
                   checked={anonymous}
-                  onChange={(event) => setAnonymous(event.target.checked)}
+                  onChange={(event) =>
+                    setAnonymous(event.target.checked)
+                  }
                   disabled={isSubmitting}
                   className="h-4 w-4 accent-[#4169e1]"
                 />
@@ -263,7 +270,9 @@ export default function GiftDetailsPage() {
                 <select
                   id="giftTiming"
                   value={giftTiming}
-                  onChange={(event) => setGiftTiming(event.target.value)}
+                  onChange={(event) =>
+                    setGiftTiming(event.target.value)
+                  }
                   disabled={isSubmitting}
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white"
                 >
