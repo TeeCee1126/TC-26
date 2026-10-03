@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -101,22 +101,26 @@ export default function WishlistPage() {
 
   const fromConfirm = searchParams.get("from") === "confirm";
 
+  const [isAttendee, setIsAttendee] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
   useEffect(() => {
-    if (fromConfirm) {
-      const savedGuest = sessionStorage.getItem("weddingGuest");
-
-      if (!savedGuest) {
-        router.replace("/confirm");
-      }
-    }
-  }, [fromConfirm, router]);
-
-  if (fromConfirm) {
     const savedGuest = sessionStorage.getItem("weddingGuest");
 
-    if (!savedGuest) {
-      return null;
+    if (fromConfirm) {
+      if (!savedGuest) {
+        router.replace("/confirm");
+        return;
+      }
+
+      setIsAttendee(true);
     }
+
+    setIsChecking(false);
+  }, [fromConfirm, router]);
+
+  if (isChecking) {
+    return null;
   }
 
   return (
@@ -227,7 +231,7 @@ export default function WishlistPage() {
 
         </div>
 
-        {fromConfirm && (
+        {isAttendee && (
           <div className="mx-auto mt-12 max-w-lg rounded-2xl border border-[#f0cbd3] bg-white p-6 text-center shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
             <p className="text-sm leading-6 text-[#475569] dark:text-slate-300">
               You have confirmed your attendance. Would you like to choose a

@@ -11,29 +11,66 @@ export default function CashGiftPage() {
   const [phone, setPhone] = useState("");
   const [anonymous, setAnonymous] = useState(false);
   const [amount, setAmount] = useState("");
+  const [giftTiming, setGiftTiming] = useState("");
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!anonymous && !name.trim()) {
+    setError("");
+
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedAmount = amount.trim();
+
+    if (!trimmedAmount) {
+      setError("Please enter the amount you would like to give.");
       return;
     }
 
-    if (!amount.trim()) {
+    const numericAmount = Number(trimmedAmount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      setError("Please enter a valid gift amount greater than ₦0.");
       return;
+    }
+
+    if (!anonymous && !trimmedName) {
+      setError("Please enter your name or choose the anonymous option.");
+      return;
+    }
+
+    if (!giftTiming) {
+      setError("Please select when you plan to give this gift.");
+      return;
+    }
+
+    if (!anonymous && trimmedPhone) {
+      const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
+
+      const validPhone =
+        /^(0\d{10}|\+234\d{10})$/.test(normalisedPhone);
+
+      if (!validPhone) {
+        setError("Please enter a valid Nigerian phone number.");
+        return;
+      }
     }
 
     setIsSubmitting(true);
+
+    const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
 
     sessionStorage.setItem(
       "cashGift",
       JSON.stringify({
         type: "cash",
-        name: anonymous ? "Anonymous" : name.trim(),
-        phone: anonymous ? "" : phone.trim(),
+        name: anonymous ? "Anonymous" : trimmedName,
+        phone: anonymous ? "" : normalisedPhone,
         anonymous,
-        amount: amount.trim(),
+        amount: trimmedAmount,
+        giftTiming,
       }),
     );
 
@@ -42,142 +79,158 @@ export default function CashGiftPage() {
 
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
-      <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center">
+      <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center justify-center">
         <div className="w-full">
 
           <Link
             href="/wishlist"
-            className="mb-10 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
+            className="mb-8 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
           >
             ← Back to wishlist
           </Link>
 
-          <div className="mb-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#4169e1] dark:text-[#e9a6b5]">
+          <div className="rounded-3xl border border-[#f0cbd3] bg-white p-7 shadow-sm dark:border-[#294274] dark:bg-[#10285c] sm:p-9">
+
+            <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
               Monetary Gift
             </p>
 
-            <h1 className="font-serif text-4xl text-[#172554] dark:text-white sm:text-5xl">
+            <h1 className="mt-3 font-serif text-3xl text-[#172554] dark:text-white sm:text-4xl">
               Cash Gift
             </h1>
 
-            <p className="mt-5 leading-7 text-[#475569] dark:text-slate-300">
-              If you would like to bless us with a cash gift, you can provide
-              the details below.
+            <p className="mt-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
+              If you would like to bless Christianah and Theophilus with a
+              monetary gift, please provide the details below.
             </p>
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+
+              <div>
+                <label
+                  htmlFor="amount"
+                  className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
+                >
+                  Gift Amount
+                </label>
+
+                <div className="flex overflow-hidden rounded-xl border border-[#f0cbd3] bg-white focus-within:border-[#4169e1] dark:border-[#294274] dark:bg-[#0b1f4d]">
+                  <span className="flex items-center px-4 text-sm text-[#64748b]">
+                    ₦
+                  </span>
+
+                  <input
+                    id="amount"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                    disabled={isSubmitting}
+                    placeholder="Enter amount"
+                    className="w-full bg-transparent px-2 py-3 text-sm text-[#172554] outline-none dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
+                >
+                  Your Name
+                </label>
+
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  disabled={anonymous || isSubmitting}
+                  placeholder="Enter your name"
+                  className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
+                />
+              </div>
+
+              <label className="flex cursor-pointer items-center gap-3 text-sm text-[#475569] dark:text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={anonymous}
+                  onChange={(event) => setAnonymous(event.target.checked)}
+                  disabled={isSubmitting}
+                  className="h-4 w-4 accent-[#4169e1]"
+                />
+
+                Give this gift anonymously
+              </label>
+
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
+                >
+                  Phone Number
+                  <span className="ml-1 font-normal text-[#64748b]">
+                    (Optional)
+                  </span>
+                </label>
+
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  disabled={anonymous || isSubmitting}
+                  placeholder="08012345678"
+                  className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="giftTiming"
+                  className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
+                >
+                  When do you plan to give this gift?
+                </label>
+
+                <select
+                  id="giftTiming"
+                  value={giftTiming}
+                  onChange={(event) => setGiftTiming(event.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white"
+                >
+                  <option value="">Select an option</option>
+                  <option value="Before the wedding">
+                    Before the wedding
+                  </option>
+                  <option value="On the wedding day">
+                    On the wedding day
+                  </option>
+                  <option value="After the wedding">
+                    After the wedding
+                  </option>
+                </select>
+              </div>
+
+              {error && (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">
+                  {error}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-full bg-[#4169e1] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "Processing..." : "Continue"}
+              </button>
+
+            </form>
           </div>
 
-          <div className="mb-8 rounded-2xl border border-[#f0cbd3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
-              A Gift of Love
-            </p>
-
-            <p className="mt-3 text-sm leading-6 text-[#475569] dark:text-slate-300">
-              Thank you for thinking of Christianah and Theophilus as they
-              begin this new chapter together.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-
-            <div>
-              <label
-                htmlFor="amount"
-                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
-              >
-                Gift Amount
-              </label>
-
-              <input
-                id="amount"
-                type="number"
-                min="1"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                placeholder="Enter amount"
-                required
-                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5]"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
-              >
-                Your Name
-              </label>
-
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Enter your name"
-                disabled={anonymous}
-                required={!anonymous}
-                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5] dark:disabled:bg-[#0f2758]"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
-              >
-                Phone Number
-              </label>
-
-              <input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                placeholder="Enter your phone number"
-                disabled={anonymous}
-                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5] dark:disabled:bg-[#0f2758]"
-              />
-            </div>
-
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#f0cbd3] bg-white p-4 dark:border-[#294274] dark:bg-[#10285c]">
-              <input
-                type="checkbox"
-                checked={anonymous}
-                onChange={(event) => {
-                  setAnonymous(event.target.checked);
-
-                  if (event.target.checked) {
-                    setName("");
-                    setPhone("");
-                  }
-                }}
-                className="mt-1 h-4 w-4 accent-[#4169e1]"
-              />
-
-              <span>
-                <span className="block text-sm font-medium text-[#172554] dark:text-white">
-                  Give anonymously
-                </span>
-
-                <span className="mt-1 block text-sm leading-5 text-[#475569] dark:text-slate-300">
-                  Your name and phone number will not be attached to the gift.
-                </span>
-              </span>
-            </label>
-
-            <div className="rounded-xl border border-[#f0cbd3] bg-white/70 px-4 py-4 text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
-              Payment details will be provided after you continue.
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full rounded-full bg-[#4169e1] px-6 py-4 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#4169e1] dark:hover:bg-[#5b7bea]"
-            >
-              {isSubmitting ? "Processing..." : "Continue"}
-            </button>
-
-          </form>
         </div>
       </div>
     </main>
