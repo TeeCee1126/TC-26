@@ -41,47 +41,49 @@ export default function CashGiftPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf9] px-6 py-12 text-slate-800">
+    <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center">
         <div className="w-full">
+
           <Link
             href="/wishlist"
-            className="mb-10 inline-block text-sm text-slate-500 transition hover:text-slate-800"
+            className="mb-10 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
           >
             ← Back to wishlist
           </Link>
 
           <div className="mb-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-slate-400">
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#4169e1] dark:text-[#e9a6b5]">
               Monetary Gift
             </p>
 
-            <h1 className="font-serif text-4xl text-slate-900 sm:text-5xl">
+            <h1 className="font-serif text-4xl text-[#172554] dark:text-white sm:text-5xl">
               Cash Gift
             </h1>
 
-            <p className="mt-5 leading-7 text-slate-600">
+            <p className="mt-5 leading-7 text-[#475569] dark:text-slate-300">
               If you would like to bless us with a cash gift, you can provide
               the details below.
             </p>
           </div>
 
-          <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
+          <div className="mb-8 rounded-2xl border border-[#f0cbd3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
+            <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
               A Gift of Love
             </p>
 
-            <p className="mt-3 text-sm leading-6 text-slate-600">
+            <p className="mt-3 text-sm leading-6 text-[#475569] dark:text-slate-300">
               Thank you for thinking of Christianah and Theophilus as they
               begin this new chapter together.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+
             <div>
               <label
                 htmlFor="amount"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Gift Amount
               </label>
@@ -94,14 +96,14 @@ export default function CashGiftPage() {
                 onChange={(event) => setAmount(event.target.value)}
                 placeholder="Enter amount"
                 required
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="name"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Your Name
               </label>
@@ -114,14 +116,14 @@ export default function CashGiftPage() {
                 placeholder="Enter your name"
                 disabled={anonymous}
                 required={!anonymous}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500 disabled:bg-slate-100"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5] dark:disabled:bg-[#0f2758]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Phone Number
               </label>
@@ -133,11 +135,11 @@ export default function CashGiftPage() {
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="Enter your phone number"
                 disabled={anonymous}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500 disabled:bg-slate-100"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5] dark:disabled:bg-[#0f2758]"
               />
             </div>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-slate-50 p-4">
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#f0cbd3] bg-white p-4 dark:border-[#294274] dark:bg-[#10285c]">
               <input
                 type="checkbox"
                 checked={anonymous}
@@ -149,31 +151,32 @@ export default function CashGiftPage() {
                     setPhone("");
                   }
                 }}
-                className="mt-1 h-4 w-4"
+                className="mt-1 h-4 w-4 accent-[#4169e1]"
               />
 
               <span>
-                <span className="block text-sm font-medium text-slate-800">
+                <span className="block text-sm font-medium text-[#172554] dark:text-white">
                   Give anonymously
                 </span>
 
-                <span className="mt-1 block text-sm leading-5 text-slate-500">
+                <span className="mt-1 block text-sm leading-5 text-[#475569] dark:text-slate-300">
                   Your name and phone number will not be attached to the gift.
                 </span>
               </span>
             </label>
 
-            <div className="rounded-xl bg-blue-50 px-4 py-4 text-sm leading-6 text-slate-600">
+            <div className="rounded-xl border border-[#f0cbd3] bg-white/70 px-4 py-4 text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
               Payment details will be provided after you continue.
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-full bg-slate-900 px-6 py-4 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-full bg-[#4169e1] px-6 py-4 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#4169e1] dark:hover:bg-[#5b7bea]"
             >
               {isSubmitting ? "Processing..." : "Continue"}
             </button>
+
           </form>
         </div>
       </div>
