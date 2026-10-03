@@ -33,35 +33,37 @@ export default function ConfirmPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf9] px-6 py-12 text-slate-800">
+    <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center">
         <div className="w-full">
+
           <a
             href="/"
-            className="mb-10 inline-block text-sm text-slate-500 transition hover:text-slate-800"
+            className="mb-10 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
           >
             ← Back to invitation
           </a>
 
           <div className="mb-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-slate-400">
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#4169e1] dark:text-[#e9a6b5]">
               RSVP
             </p>
 
-            <h1 className="font-serif text-4xl text-slate-900 sm:text-5xl">
+            <h1 className="font-serif text-4xl text-[#172554] dark:text-white sm:text-5xl">
               Confirm Your Attendance
             </h1>
 
-            <p className="mt-5 leading-7 text-slate-600">
+            <p className="mt-5 leading-7 text-[#475569] dark:text-slate-300">
               Please provide your details below to confirm your invitation.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+
             <div>
               <label
                 htmlFor="name"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Full Name
               </label>
@@ -74,14 +76,14 @@ export default function ConfirmPage() {
                 onChange={(event) => setName(event.target.value)}
                 placeholder="Enter your full name"
                 required
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="phone"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Phone Number
               </label>
@@ -92,16 +94,16 @@ export default function ConfirmPage() {
                 type="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-                placeholder="e.g. 07068364743"
+                placeholder="e.g. 08012345678"
                 required
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition placeholder:text-slate-400 focus:border-slate-500"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition placeholder:text-[#94a3b8] focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:placeholder:text-slate-500 dark:focus:border-[#e9a6b5]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="numberAttending"
-                className="mb-2 block text-sm font-medium text-slate-700"
+                className="mb-2 block text-sm font-medium text-[#172554] dark:text-slate-200"
               >
                 Number Attending
               </label>
@@ -113,7 +115,7 @@ export default function ConfirmPage() {
                 onChange={(event) =>
                   setNumberAttending(event.target.value)
                 }
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 outline-none transition focus:border-slate-500"
+                className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3.5 text-[#172554] outline-none transition focus:border-[#4169e1] focus:ring-2 focus:ring-[#4169e1]/10 dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:focus:border-[#e9a6b5]"
               >
                 <option value="1">1 person</option>
                 <option value="2">2 people</option>
@@ -128,7 +130,7 @@ export default function ConfirmPage() {
               </select>
             </div>
 
-            <div className="rounded-xl bg-blue-50 px-4 py-4 text-sm leading-6 text-slate-600">
+            <div className="rounded-xl border border-[#f0cbd3] bg-white/70 px-4 py-4 text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
               Your details will only be used for managing this private
               invitation.
             </div>
@@ -136,10 +138,11 @@ export default function ConfirmPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-full bg-slate-900 px-6 py-4 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-full bg-[#4169e1] px-6 py-4 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#4169e1] dark:hover:bg-[#5b7bea]"
             >
               {isSubmitting ? "Confirming..." : "Confirm Attendance"}
             </button>
+
           </form>
         </div>
       </div>
