@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveGuest } from "@/lib/guest-storage";
+import { GuestRecord } from "@/lib/guest";
 
 export default function ConfirmPage() {
   const router = useRouter();
@@ -43,17 +45,21 @@ export default function ConfirmPage() {
 
     setIsSubmitting(true);
 
-    sessionStorage.setItem(
-      "weddingGuest",
-      JSON.stringify({
-        name: trimmedName,
-        phone: normalisedPhone,
-        numberAttending: attending,
-      }),
-    );
+    const guest: GuestRecord = {
+  name: trimmedName,
+  phone: normalisedPhone,
+  numberAttending: attending,
+  createdAt: new Date().toISOString(),
+};
 
-    router.push("/wishlist?from=confirm");
-  }
+saveGuest(guest);
+
+sessionStorage.setItem(
+  "weddingGuest",
+  JSON.stringify(guest),
+);
+
+router.push("/wishlist?from=confirm");
 
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">

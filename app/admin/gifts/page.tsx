@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getStoredGifts } from "@/lib/gift-storage";
-import { GiftRecord } from "@/lib/gift";
+import {
+  getStoredGifts,
+  updateGiftStatus,
+} from "@/lib/gift-storage";
+import { GiftRecord, GiftStatus } from "@/lib/gift";
 
 export default function AdminGiftsPage() {
   const [gifts, setGifts] = useState<GiftRecord[]>([]);
@@ -42,10 +45,34 @@ export default function AdminGiftsPage() {
     });
   }
 
+  function handleStatusChange(
+    index: number,
+    status: GiftStatus,
+  ) {
+    updateGiftStatus(index, status);
+
+    setGifts(getStoredGifts());
+  }
+
+  function getStatusClass(status: GiftStatus) {
+    if (status === "received") {
+      return "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200";
+    }
+
+    if (status === "completed") {
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200";
+    }
+
+    if (status === "cancelled") {
+      return "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200";
+    }
+
+    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200";
+  }
+
   return (
     <main className="min-h-screen px-5 py-10 sm:px-8">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
         <div className="mb-8">
           <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#4169E1]">
             Private Admin Area
@@ -56,12 +83,13 @@ export default function AdminGiftsPage() {
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-300">
-            View gifts submitted through the wedding wishlist.
+            View and manage gifts submitted through the wedding
+            wishlist.
           </p>
         </div>
 
         {/* Summary */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-[#F0CBD3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
             <p className="text-sm text-slate-500 dark:text-slate-300">
               Total Gifts
@@ -74,24 +102,33 @@ export default function AdminGiftsPage() {
 
           <div className="rounded-2xl border border-[#F0CBD3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
             <p className="text-sm text-slate-500 dark:text-slate-300">
-              Physical Gifts
+              Pending
             </p>
 
             <p className="mt-2 text-3xl font-semibold text-[#172554] dark:text-white">
-              {gifts.filter((gift) => gift.type === "physical").length}
+              {gifts.filter((gift) => gift.status === "pending").length}
             </p>
           </div>
 
           <div className="rounded-2xl border border-[#F0CBD3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
             <p className="text-sm text-slate-500 dark:text-slate-300">
-              Cash / Custom
+              Received
+            </p>
+
+            <p className="mt-2 text-3xl font-semibold text-[#172554] dark:text-white">
+              {gifts.filter((gift) => gift.status === "received").length}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-[#F0CBD3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
+            <p className="text-sm text-slate-500 dark:text-slate-300">
+              Completed
             </p>
 
             <p className="mt-2 text-3xl font-semibold text-[#172554] dark:text-white">
               {
                 gifts.filter(
-                  (gift) =>
-                    gift.type === "cash" || gift.type === "custom",
+                  (gift) => gift.status === "completed",
                 ).length
               }
             </p>
@@ -112,7 +149,7 @@ export default function AdminGiftsPage() {
         ) : (
           <div className="overflow-hidden rounded-2xl border border-[#F0CBD3] bg-white shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
             <div className="overflow-x-auto">
-              <table className="min-w-[1100px] w-full text-left">
+              <table className="min-w-[1200px] w-full text-left">
                 <thead className="border-b border-[#F0CBD3] bg-[#FFF4F6] dark:border-[#294274] dark:bg-[#0B1F4D]">
                   <tr>
                     <th className="px-5 py-4 text-sm font-semibold text-[#172554] dark:text-white">
@@ -161,12 +198,6 @@ export default function AdminGiftsPage() {
                         <p className="font-medium text-[#172554] dark:text-white">
                           {getGiftDetails(gift)}
                         </p>
-
-                        {gift.type === "custom" && gift.description && (
-                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
-                            Custom request
-                          </p>
-                        )}
                       </td>
 
                       <td className="px-5 py-5">
@@ -190,9 +221,34 @@ export default function AdminGiftsPage() {
                       </td>
 
                       <td className="px-5 py-5">
-                        <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium capitalize text-blue-800 dark:bg-blue-900/40 dark:text-blue-200">
-                          {gift.status}
-                        </span>
+                        <select
+                          value={gift.status}
+                          onChange={(event) =>
+                            handleStatusChange(
+                              index,
+                              event.target.value as GiftStatus,
+                            )
+                          }
+                          className={`rounded-full border-0 px-3 py-2 text-xs font-medium outline-none ${getStatusClass(
+                            gift.status,
+                          )}`}
+                        >
+                          <option value="pending">
+                            Pending
+                          </option>
+
+                          <option value="received">
+                            Received
+                          </option>
+
+                          <option value="completed">
+                            Completed
+                          </option>
+
+                          <option value="cancelled">
+                            Cancelled
+                          </option>
+                        </select>
                       </td>
 
                       <td className="whitespace-nowrap px-5 py-5 text-sm text-slate-600 dark:text-slate-300">
