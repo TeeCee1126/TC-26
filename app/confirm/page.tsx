@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { saveGuest } from "@/lib/guest-storage";
 import { GuestRecord } from "@/lib/guest";
 
@@ -14,7 +15,7 @@ export default function ConfirmPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError("");
@@ -52,14 +53,50 @@ export default function ConfirmPage() {
       createdAt: new Date().toISOString(),
     };
 
-    saveGuest(guest);
+    try {
+      const response = await fetch("/api/guests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          phone: normalisedPhone,
+          numberAttending: attending,
+        }),
+      });
 
-    sessionStorage.setItem(
-      "weddingGuest",
-      JSON.stringify(guest),
-    );
+      const data = await response.json();
 
-    router.push("/wishlist?from=confirm");
+      if (!response.ok) {
+        setError(
+          data.message ||
+            "Unable to save your attendance. Please try again.",
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Keep the guest details available for the current invitation flow.
+      sessionStorage.setItem(
+        "weddingGuest",
+        JSON.stringify(guest),
+      );
+
+      // Keep localStorage temporarily while the admin section
+      // is being migrated to MongoDB.
+      saveGuest(guest);
+
+      router.push("/wishlist?from=confirm");
+    } catch (error) {
+      console.error("RSVP submission error:", error);
+
+      setError(
+        "Unable to save your attendance. Please check your connection and try again.",
+      );
+
+      setIsSubmitting(false);
+    }
   }
 
   return (

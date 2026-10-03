@@ -2,26 +2,59 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getStoredGuests } from "@/lib/guest-storage";
-import { GuestRecord } from "@/lib/guest";
+
+type GuestRecord = {
+  _id: string;
+  name: string;
+  phone: string;
+  numberAttending: number;
+  createdAt: string;
+};
 
 export default function AdminGuestsPage() {
   const router = useRouter();
 
   const [guests, setGuests] = useState<GuestRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-  const authenticated = sessionStorage.getItem(
-    "weddingAdminAuthenticated",
-  );
+    const authenticated = sessionStorage.getItem(
+      "weddingAdminAuthenticated",
+    );
 
-  if (authenticated !== "true") {
-    router.replace("/admin/login");
-    return;
-  }
+    if (authenticated !== "true") {
+      router.replace("/admin/login");
+      return;
+    }
 
-  setGuests(getStoredGuests());
-}, [router]);
+    async function loadGuests() {
+      try {
+        const response = await fetch("/api/guests");
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(
+            data.message || "Unable to load attendance records.",
+          );
+          return;
+        }
+
+        setGuests(data.guests || []);
+      } catch (error) {
+        console.error("Guest retrieval error:", error);
+
+        setError(
+          "Unable to load attendance records. Please try again.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadGuests();
+  }, [router]);
 
   function formatDate(date: string) {
     return new Date(date).toLocaleString("en-NG", {
@@ -53,6 +86,13 @@ export default function AdminGuestsPage() {
           </p>
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+            {error}
+          </div>
+        )}
+
         {/* Summary */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-[#F0CBD3] bg-white p-5 shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
@@ -61,7 +101,7 @@ export default function AdminGuestsPage() {
             </p>
 
             <p className="mt-2 text-3xl font-semibold text-[#172554] dark:text-white">
-              {guests.length}
+              {isLoading ? "—" : guests.length}
             </p>
           </div>
 
@@ -71,13 +111,24 @@ export default function AdminGuestsPage() {
             </p>
 
             <p className="mt-2 text-3xl font-semibold text-[#172554] dark:text-white">
-              {totalPeople}
+              {isLoading ? "—" : totalPeople}
             </p>
           </div>
         </div>
 
-        {/* Empty State */}
-        {guests.length === 0 ? (
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="rounded-2xl border border-dashed border-[#F0CBD3] bg-white px-6 py-16 text-center dark:border-[#294274] dark:bg-[#10285C]">
+            <h2 className="text-xl font-semibold text-[#172554] dark:text-white">
+              Loading attendance records...
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Please wait while the guest records are loaded.
+            </p>
+          </div>
+        ) : guests.length === 0 ? (
+          /* Empty State */
           <div className="rounded-2xl border border-dashed border-[#F0CBD3] bg-white px-6 py-16 text-center dark:border-[#294274] dark:bg-[#10285C]">
             <h2 className="text-xl font-semibold text-[#172554] dark:text-white">
               No confirmed guests yet
@@ -112,9 +163,9 @@ export default function AdminGuestsPage() {
                 </thead>
 
                 <tbody>
-                  {guests.map((guest, index) => (
+                  {guests.map((guest) => (
                     <tr
-                      key={`${guest.createdAt}-${index}`}
+                      key={guest._id}
                       className="border-b border-[#F0CBD3] last:border-b-0 dark:border-[#294274]"
                     >
                       <td className="px-5 py-5">
