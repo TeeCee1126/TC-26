@@ -1,10 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+
 import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 
-import { saveGift } from "@/lib/gift-storage";
+
+
 import { GiftRecord, GiftTiming } from "@/lib/gift";
 
 export default function CashGiftPage() {
@@ -18,7 +21,9 @@ export default function CashGiftPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
 
     setError("");
@@ -28,7 +33,9 @@ export default function CashGiftPage() {
     const trimmedAmount = amount.trim();
 
     if (!anonymous && !trimmedName) {
-      setError("Please enter your name or choose the anonymous option.");
+      setError(
+        "Please enter your name or choose the anonymous option.",
+      );
       return;
     }
 
@@ -73,14 +80,50 @@ export default function CashGiftPage() {
       createdAt: new Date().toISOString(),
     };
 
-    saveGift(gift);
+    try {
+      const response = await fetch("/api/gifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "cash",
+          name: gift.name,
+          phone: gift.phone,
+          anonymous: gift.anonymous,
+          giftTiming: gift.giftTiming,
+          amount: gift.amount,
+        }),
+      });
 
-    sessionStorage.setItem(
-      "cashGift",
-      JSON.stringify(gift),
-    );
+      const data = await response.json();
 
-    router.push("/gift-confirmed?type=cash");
+      if (!response.ok) {
+        setError(
+          data.message ||
+            "Unable to save your cash gift. Please try again.",
+        );
+
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Keep this temporarily for the gift confirmation page.
+      sessionStorage.setItem(
+        "cashGift",
+        JSON.stringify(gift),
+      );
+
+      router.push("/gift-confirmed?type=cash");
+    } catch (error) {
+      console.error("Cash gift submission error:", error);
+
+      setError(
+        "Unable to save your cash gift. Please check your connection and try again.",
+      );
+
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -104,11 +147,14 @@ export default function CashGiftPage() {
             </h1>
 
             <p className="mt-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
-              If you would prefer to give a cash gift, you can record
-              your intended gift below.
+              If you would prefer to give a cash gift, you can
+              record your intended gift below.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+            >
               <div>
                 <label
                   htmlFor="amount"
@@ -150,7 +196,9 @@ export default function CashGiftPage() {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(event) =>
+                    setName(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="Enter your name"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -177,7 +225,6 @@ export default function CashGiftPage() {
                   className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
                 >
                   Phone Number
-
                   <span className="ml-1 font-normal text-[#64748b]">
                     (Optional)
                   </span>
@@ -187,7 +234,9 @@ export default function CashGiftPage() {
                   id="phone"
                   type="tel"
                   value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
+                  onChange={(event) =>
+                    setPhone(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="08012345678"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -226,67 +275,69 @@ export default function CashGiftPage() {
                   </option>
                 </select>
               </div>
-<div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-5 dark:border-[#294274] dark:bg-[#0b1f4d]">
-  <p className="text-sm font-medium text-[#172554] dark:text-white">
-    Cash Gift Payment Details
-  </p>
 
-  <div className="mt-4 space-y-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
-    <div>
-      <p className="font-medium text-[#172554] dark:text-white">
-        GTBank
-      </p>
+              <div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-5 dark:border-[#294274] dark:bg-[#0b1f4d]">
+                <p className="text-sm font-medium text-[#172554] dark:text-white">
+                  Cash Gift Payment Details
+                </p>
 
-      <p>
-        Account Number:{" "}
-        <span className="font-medium">
-          0261338693
-        </span>
-      </p>
+                <div className="mt-4 space-y-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
+                  <div>
+                    <p className="font-medium text-[#172554] dark:text-white">
+                      GTBank
+                    </p>
 
-      <p>
-        Account Name:{" "}
-        <span className="font-medium">
-          Olutoye Abiodun Theophilus
-        </span>
-      </p>
-    </div>
+                    <p>
+                      Account Number:{" "}
+                      <span className="font-medium">
+                        0261338693
+                      </span>
+                    </p>
 
-    <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
-      <p className="font-medium text-[#172554] dark:text-white">
-        OPay
-      </p>
+                    <p>
+                      Account Name:{" "}
+                      <span className="font-medium">
+                        Olutoye Abiodun Theophilus
+                      </span>
+                    </p>
+                  </div>
 
-      <p>
-        Account Number:{" "}
-        <span className="font-medium">
-          7068364743
-        </span>
-      </p>
+                  <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
+                    <p className="font-medium text-[#172554] dark:text-white">
+                      OPay
+                    </p>
 
-      <p>
-        Account Name:{" "}
-        <span className="font-medium">
-          Abiodun Olutoye
-        </span>
-      </p>
-    </div>
+                    <p>
+                      Account Number:{" "}
+                      <span className="font-medium">
+                        7068364743
+                      </span>
+                    </p>
 
-    <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
-      <p className="font-medium text-[#172554] dark:text-white">
-        Transfer Description
-      </p>
+                    <p>
+                      Account Name:{" "}
+                      <span className="font-medium">
+                        Abiodun Olutoye
+                      </span>
+                    </p>
+                  </div>
 
-      <p>
-        Please use{" "}
-        <span className="font-medium text-[#4169e1] dark:text-[#e9a6b5]">
-          Wedding gift
-        </span>{" "}
-        as the transfer description.
-      </p>
-    </div>
-  </div>
-</div>
+                  <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
+                    <p className="font-medium text-[#172554] dark:text-white">
+                      Transfer Description
+                    </p>
+
+                    <p>
+                      Please use{" "}
+                      <span className="font-medium text-[#4169e1] dark:text-[#e9a6b5]">
+                        Wedding gift
+                      </span>{" "}
+                      as the transfer description.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {error && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">
                   {error}
@@ -298,7 +349,9 @@ export default function CashGiftPage() {
                 disabled={isSubmitting}
                 className="w-full rounded-full bg-[#4169e1] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Processing..." : "Confirm Cash Gift"}
+                {isSubmitting
+                  ? "Processing..."
+                  : "Confirm Cash Gift"}
               </button>
             </form>
           </div>

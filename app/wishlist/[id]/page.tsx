@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { saveGift } from "@/lib/gift-storage";
+
 import { GiftRecord, GiftTiming } from "@/lib/gift";
 
 const wishlistItems = [
@@ -115,22 +115,23 @@ export default function GiftDetailsPage() {
     );
   }
 
-  // Keep these values available to the submit handler
-  // after the item existence check.
   const itemId = item.id;
   const itemName = item.name;
   const itemDescription = item.description;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
-
     setError("");
 
     const trimmedName = name.trim();
     const trimmedPhone = phone.trim();
 
     if (!anonymous && !trimmedName) {
-      setError("Please enter your name or choose the anonymous option.");
+      setError(
+        "Please enter your name or choose the anonymous option.",
+      );
       return;
     }
 
@@ -165,17 +166,51 @@ export default function GiftDetailsPage() {
       createdAt: new Date().toISOString(),
     };
 
-    // Save permanently in the current localStorage prototype
-    saveGift(gift);
+    try {
+      const response = await fetch("/api/gifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "physical",
+          name: gift.name,
+          phone: gift.phone,
+          anonymous: gift.anonymous,
+          giftTiming: gift.giftTiming,
+          itemId: gift.itemId,
+          itemName: gift.itemName,
+        }),
+      });
 
-    // Keep the current gift in sessionStorage
-    // so the confirmation page can display it.
-    sessionStorage.setItem(
-      "selectedGift",
-      JSON.stringify(gift),
-    );
+      const data = await response.json();
 
-    router.push("/gift-confirmed");
+      if (!response.ok) {
+        setError(
+          data.message ||
+            "Unable to save your gift. Please try again.",
+        );
+
+        setIsSubmitting(false);
+        return;
+      }
+
+      sessionStorage.setItem(
+        "selectedGift",
+        JSON.stringify(gift),
+      );
+    
+
+      router.push("/gift-confirmed");
+    } catch (error) {
+      console.error("Gift submission error:", error);
+
+      setError(
+        "Unable to save your gift. Please check your connection and try again.",
+      );
+
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -202,7 +237,10 @@ export default function GiftDetailsPage() {
               {itemDescription}
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+            >
               <div>
                 <label
                   htmlFor="name"
@@ -215,7 +253,9 @@ export default function GiftDetailsPage() {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(event) =>
+                    setName(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="Enter your name"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -242,7 +282,6 @@ export default function GiftDetailsPage() {
                   className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
                 >
                   Phone Number
-
                   <span className="ml-1 font-normal text-[#64748b]">
                     (Optional)
                   </span>
@@ -252,7 +291,9 @@ export default function GiftDetailsPage() {
                   id="phone"
                   type="tel"
                   value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
+                  onChange={(event) =>
+                    setPhone(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="08012345678"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -291,22 +332,24 @@ export default function GiftDetailsPage() {
                   </option>
                 </select>
               </div>
-              <div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-4 dark:border-[#294274] dark:bg-[#0b1f4d]">
-  <p className="text-sm font-medium text-[#172554] dark:text-white">
-    Delivery Information
-  </p>
 
-  <p className="mt-2 text-sm leading-6 text-[#475569] dark:text-slate-300">
-    For delivery arrangements, please reach out to the groom on{" "}
-    <a
-      href="tel:07068364743"
-      className="font-medium text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
-    >
-      07068364743
-    </a>
-    .
-  </p>
-</div>
+              <div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-4 dark:border-[#294274] dark:bg-[#0b1f4d]">
+                <p className="text-sm font-medium text-[#172554] dark:text-white">
+                  Delivery Information
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-[#475569] dark:text-slate-300">
+                  For delivery arrangements, please reach out to
+                  the groom on{" "}
+                  <a
+                    href="tel:07068364743"
+                    className="font-medium text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
+                  >
+                    07068364743
+                  </a>
+                  .
+                </p>
+              </div>
 
               {error && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">

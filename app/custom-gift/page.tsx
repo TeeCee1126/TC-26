@@ -1,10 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+
 import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 
-import { saveGift } from "@/lib/gift-storage";
 import { GiftRecord, GiftTiming } from "@/lib/gift";
 
 export default function CustomGiftPage() {
@@ -18,7 +19,9 @@ export default function CustomGiftPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault();
 
     setError("");
@@ -33,7 +36,9 @@ export default function CustomGiftPage() {
     }
 
     if (!anonymous && !trimmedName) {
-      setError("Please enter your name or choose the anonymous option.");
+      setError(
+        "Please enter your name or choose the anonymous option.",
+      );
       return;
     }
 
@@ -67,14 +72,51 @@ export default function CustomGiftPage() {
       createdAt: new Date().toISOString(),
     };
 
-    saveGift(gift);
+    try {
+      const response = await fetch("/api/gifts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "custom",
+          name: gift.name,
+          phone: gift.phone,
+          anonymous: gift.anonymous,
+          giftTiming: gift.giftTiming,
+          description: gift.description,
+        }),
+      });
 
-    sessionStorage.setItem(
-      "customGift",
-      JSON.stringify(gift),
-    );
+      const data = await response.json();
 
-    router.push("/gift-confirmed?type=custom");
+      if (!response.ok) {
+        setError(
+          data.message ||
+            "Unable to save your custom gift. Please try again.",
+        );
+
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Keep this temporarily for the gift confirmation page.
+      sessionStorage.setItem(
+        "customGift",
+        JSON.stringify(gift),
+      );
+
+
+      router.push("/gift-confirmed?type=custom");
+    } catch (error) {
+      console.error("Custom gift submission error:", error);
+
+      setError(
+        "Unable to save your custom gift. Please check your connection and try again.",
+      );
+
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -98,11 +140,14 @@ export default function CustomGiftPage() {
             </h1>
 
             <p className="mt-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
-              Have something else in mind? Tell us about the gift you would
-              like to give.
+              Have something else in mind? Tell us about the gift you
+              would like to give.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-5"
+            >
               <div>
                 <label
                   htmlFor="description"
@@ -114,7 +159,9 @@ export default function CustomGiftPage() {
                 <textarea
                   id="description"
                   value={description}
-                  onChange={(event) => setDescription(event.target.value)}
+                  onChange={(event) =>
+                    setDescription(event.target.value)
+                  }
                   disabled={isSubmitting}
                   placeholder="Describe the gift you would like to give..."
                   rows={5}
@@ -134,7 +181,9 @@ export default function CustomGiftPage() {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(event) =>
+                    setName(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="Enter your name"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -145,7 +194,9 @@ export default function CustomGiftPage() {
                 <input
                   type="checkbox"
                   checked={anonymous}
-                  onChange={(event) => setAnonymous(event.target.checked)}
+                  onChange={(event) =>
+                    setAnonymous(event.target.checked)
+                  }
                   disabled={isSubmitting}
                   className="h-4 w-4 accent-[#4169e1]"
                 />
@@ -159,7 +210,6 @@ export default function CustomGiftPage() {
                   className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
                 >
                   Phone Number
-
                   <span className="ml-1 font-normal text-[#64748b]">
                     (Optional)
                   </span>
@@ -169,7 +219,9 @@ export default function CustomGiftPage() {
                   id="phone"
                   type="tel"
                   value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
+                  onChange={(event) =>
+                    setPhone(event.target.value)
+                  }
                   disabled={anonymous || isSubmitting}
                   placeholder="08012345678"
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
@@ -187,7 +239,9 @@ export default function CustomGiftPage() {
                 <select
                   id="giftTiming"
                   value={giftTiming}
-                  onChange={(event) => setGiftTiming(event.target.value)}
+                  onChange={(event) =>
+                    setGiftTiming(event.target.value)
+                  }
                   disabled={isSubmitting}
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white"
                 >
@@ -206,22 +260,25 @@ export default function CustomGiftPage() {
                   </option>
                 </select>
               </div>
-<div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-4 dark:border-[#294274] dark:bg-[#0b1f4d]">
-  <p className="text-sm font-medium text-[#172554] dark:text-white">
-    Delivery Information
-  </p>
 
-  <p className="mt-2 text-sm leading-6 text-[#475569] dark:text-slate-300">
-    For delivery arrangements, please reach out to the groom on{" "}
-    <a
-      href="tel:07068364743"
-      className="font-medium text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
-    >
-      07068364743
-    </a>
-    .
-  </p>
-</div>
+              <div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-4 dark:border-[#294274] dark:bg-[#0b1f4d]">
+                <p className="text-sm font-medium text-[#172554] dark:text-white">
+                  Delivery Information
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-[#475569] dark:text-slate-300">
+                  For delivery arrangements, please reach out to
+                  the groom on{" "}
+                  <a
+                    href="tel:07068364743"
+                    className="font-medium text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
+                  >
+                    07068364743
+                  </a>
+                  .
+                </p>
+              </div>
+
               {error && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">
                   {error}

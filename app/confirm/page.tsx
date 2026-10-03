@@ -3,7 +3,6 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { saveGuest } from "@/lib/guest-storage";
 import { GuestRecord } from "@/lib/guest";
 
 export default function ConfirmPage() {
@@ -85,7 +84,6 @@ export default function ConfirmPage() {
 
       // Keep localStorage temporarily while the admin section
       // is being migrated to MongoDB.
-      saveGuest(guest);
 
       router.push("/wishlist?from=confirm");
     } catch (error) {
