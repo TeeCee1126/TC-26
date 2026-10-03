@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -99,6 +100,24 @@ export default function WishlistPage() {
   const router = useRouter();
 
   const fromConfirm = searchParams.get("from") === "confirm";
+
+  useEffect(() => {
+    if (fromConfirm) {
+      const savedGuest = sessionStorage.getItem("weddingGuest");
+
+      if (!savedGuest) {
+        router.replace("/confirm");
+      }
+    }
+  }, [fromConfirm, router]);
+
+  if (fromConfirm) {
+    const savedGuest = sessionStorage.getItem("weddingGuest");
+
+    if (!savedGuest) {
+      return null;
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">

@@ -9,12 +9,35 @@ export default function ConfirmPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [numberAttending, setNumberAttending] = useState("1");
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!name.trim() || !phone.trim()) {
+    setError("");
+
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const attending = Number(numberAttending);
+
+    if (!trimmedName) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
+
+    const validPhone =
+      /^(0\d{10}|\+234\d{10})$/.test(normalisedPhone);
+
+    if (!validPhone) {
+      setError("Please enter a valid Nigerian phone number.");
+      return;
+    }
+
+    if (attending < 1 || attending > 10) {
+      setError("Please select the number of people attending.");
       return;
     }
 
@@ -23,9 +46,9 @@ export default function ConfirmPage() {
     sessionStorage.setItem(
       "weddingGuest",
       JSON.stringify({
-        name: name.trim(),
-        phone: phone.trim(),
-        numberAttending: Number(numberAttending),
+        name: trimmedName,
+        phone: normalisedPhone,
+        numberAttending: attending,
       }),
     );
 
@@ -129,6 +152,15 @@ export default function ConfirmPage() {
                 <option value="10">10 people</option>
               </select>
             </div>
+
+            {error && (
+              <div
+                role="alert"
+                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300"
+              >
+                {error}
+              </div>
+            )}
 
             <div className="rounded-xl border border-[#f0cbd3] bg-white/70 px-4 py-4 text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
               Your details will only be used for managing this private

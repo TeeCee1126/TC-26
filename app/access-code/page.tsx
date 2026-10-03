@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Guest = {
   name: string;
@@ -10,35 +11,44 @@ type Guest = {
 };
 
 export default function AccessCodePage() {
+  const router = useRouter();
+
   const [guest, setGuest] = useState<Guest | null>(null);
   const [accessCode, setAccessCode] = useState("");
 
   useEffect(() => {
     const savedGuest = sessionStorage.getItem("weddingGuest");
 
-    if (savedGuest) {
-      const parsedGuest = JSON.parse(savedGuest);
-      setGuest(parsedGuest);
-
-      let savedCode = sessionStorage.getItem("weddingAccessCode");
-
-      if (!savedCode) {
-        const randomPart = Math.random()
-          .toString(36)
-          .substring(2, 7)
-          .toUpperCase();
-
-        savedCode = `TC${randomPart}`;
-
-        sessionStorage.setItem("weddingAccessCode", savedCode);
-      }
-
-      setAccessCode(savedCode);
+    if (!savedGuest) {
+      router.replace("/");
+      return;
     }
-  }, []);
+
+    const parsedGuest = JSON.parse(savedGuest);
+    setGuest(parsedGuest);
+
+    let savedCode = sessionStorage.getItem("weddingAccessCode");
+
+    if (!savedCode) {
+      const randomPart = Math.random()
+        .toString(36)
+        .substring(2, 7)
+        .toUpperCase();
+
+      savedCode = `TC${randomPart}`;
+
+      sessionStorage.setItem("weddingAccessCode", savedCode);
+    }
+
+    setAccessCode(savedCode);
+  }, [router]);
+
+  if (!guest) {
+    return null;
+  }
 
   return (
-    <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] dark:bg-[#0b1f4d] dark:text-slate-100">
+    <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center justify-center text-center">
         <div className="w-full">
           <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#4169e1] dark:text-[#e9a6b5]">
@@ -49,11 +59,9 @@ export default function AccessCodePage() {
             Your Access Code
           </h1>
 
-          {guest && (
-            <p className="mx-auto mt-5 max-w-md leading-7 text-slate-600 dark:text-slate-300">
-              Thank you, {guest.name}. Your invitation has been confirmed.
-            </p>
-          )}
+          <p className="mx-auto mt-5 max-w-md leading-7 text-slate-600 dark:text-slate-300">
+            Thank you, {guest.name}. Your invitation has been confirmed.
+          </p>
 
           <div className="mx-auto mt-10 max-w-sm rounded-2xl border border-[#f0cbd3] bg-white p-8 shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
             <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">

@@ -19,6 +19,7 @@ export default function GiftConfirmedPage() {
   const type = searchParams.get("type");
 
   const [gift, setGift] = useState<Gift | null>(null);
+  const [isAttendee, setIsAttendee] = useState(false);
 
   useEffect(() => {
     let storageKey = "selectedGift";
@@ -36,13 +37,18 @@ export default function GiftConfirmedPage() {
     if (savedGift) {
       setGift(JSON.parse(savedGift));
     }
+
+    const savedGuest = sessionStorage.getItem("weddingGuest");
+
+    if (savedGuest) {
+      setIsAttendee(true);
+    }
   }, [type]);
 
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center justify-center text-center">
         <div className="w-full">
-
           <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-[#f0cbd3] bg-white shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
             <span className="text-3xl font-medium text-[#4169e1] dark:text-[#e9a6b5]">
               ✓
@@ -59,7 +65,11 @@ export default function GiftConfirmedPage() {
 
           {gift && (
             <p className="mt-5 text-lg text-[#475569] dark:text-slate-300">
-              Thank you, <strong className="text-[#172554] dark:text-white">{gift.name}</strong>.
+              Thank you,{" "}
+              <strong className="text-[#172554] dark:text-white">
+                {gift.name}
+              </strong>
+              .
             </p>
           )}
 
@@ -75,7 +85,6 @@ export default function GiftConfirmedPage() {
               </p>
 
               <div className="mt-4 space-y-3 text-sm leading-6 text-[#475569] dark:text-slate-300">
-
                 {gift.type === "physical" && gift.itemName && (
                   <p>
                     <span className="font-medium text-[#172554] dark:text-white">
@@ -109,13 +118,11 @@ export default function GiftConfirmedPage() {
                   </span>{" "}
                   {gift.anonymous ? "Anonymous" : gift.name}
                 </p>
-
               </div>
             </div>
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-
             <Link
               href="/wishlist"
               className="rounded-full bg-[#4169e1] px-7 py-3.5 text-sm font-medium text-white transition hover:bg-[#3157c7] dark:bg-[#4169e1] dark:hover:bg-[#5b7bea]"
@@ -123,13 +130,21 @@ export default function GiftConfirmedPage() {
               Give Another Gift
             </Link>
 
-            <Link
-              href="/"
-              className="rounded-full border border-[#e9a6b5] bg-white px-7 py-3.5 text-sm font-medium text-[#172554] transition hover:bg-[#fff4f6] dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:hover:bg-[#16346f]"
-            >
-              Return to Invitation
-            </Link>
-
+            {isAttendee ? (
+              <Link
+                href="/confirmed"
+                className="rounded-full border border-[#e9a6b5] bg-white px-7 py-3.5 text-sm font-medium text-[#172554] transition hover:bg-[#fff4f6] dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:hover:bg-[#16346f]"
+              >
+                Continue to Confirmation
+              </Link>
+            ) : (
+              <Link
+                href="/"
+                className="rounded-full border border-[#e9a6b5] bg-white px-7 py-3.5 text-sm font-medium text-[#172554] transition hover:bg-[#fff4f6] dark:border-[#294274] dark:bg-[#10285c] dark:text-white dark:hover:bg-[#16346f]"
+              >
+                Return to Invitation
+              </Link>
+            )}
           </div>
         </div>
       </div>
