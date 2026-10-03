@@ -46,26 +46,26 @@ export default function ConfirmPage() {
     setIsSubmitting(true);
 
     const guest: GuestRecord = {
-  name: trimmedName,
-  phone: normalisedPhone,
-  numberAttending: attending,
-  createdAt: new Date().toISOString(),
-};
+      name: trimmedName,
+      phone: normalisedPhone,
+      numberAttending: attending,
+      createdAt: new Date().toISOString(),
+    };
 
-saveGuest(guest);
+    saveGuest(guest);
 
-sessionStorage.setItem(
-  "weddingGuest",
-  JSON.stringify(guest),
-);
+    sessionStorage.setItem(
+      "weddingGuest",
+      JSON.stringify(guest),
+    );
 
-router.push("/wishlist?from=confirm");
+    router.push("/wishlist?from=confirm");
+  }
 
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center">
         <div className="w-full">
-
           <a
             href="/"
             className="mb-10 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
@@ -88,7 +88,6 @@ router.push("/wishlist?from=confirm");
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
             <div>
               <label
                 htmlFor="name"
@@ -180,7 +179,6 @@ router.push("/wishlist?from=confirm");
             >
               {isSubmitting ? "Confirming..." : "Confirm Attendance"}
             </button>
-
           </form>
         </div>
       </div>
