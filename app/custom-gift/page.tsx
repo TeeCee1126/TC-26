@@ -4,6 +4,9 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { saveGift } from "@/lib/gift-storage";
+import { GiftRecord, GiftTiming } from "@/lib/gift";
+
 export default function CustomGiftPage() {
   const router = useRouter();
 
@@ -39,9 +42,9 @@ export default function CustomGiftPage() {
       return;
     }
 
-    if (!anonymous && trimmedPhone) {
-      const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
+    const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
 
+    if (!anonymous && trimmedPhone) {
       const validPhone =
         /^(0\d{10}|\+234\d{10})$/.test(normalisedPhone);
 
@@ -53,18 +56,22 @@ export default function CustomGiftPage() {
 
     setIsSubmitting(true);
 
-    const normalisedPhone = trimmedPhone.replace(/[\s-]/g, "");
+    const gift: GiftRecord = {
+      type: "custom",
+      description: trimmedDescription,
+      name: anonymous ? "Anonymous" : trimmedName,
+      phone: anonymous ? "" : normalisedPhone,
+      anonymous,
+      giftTiming: giftTiming as GiftTiming,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+
+    saveGift(gift);
 
     sessionStorage.setItem(
       "customGift",
-      JSON.stringify({
-        type: "custom",
-        description: trimmedDescription,
-        name: anonymous ? "Anonymous" : trimmedName,
-        phone: anonymous ? "" : normalisedPhone,
-        anonymous,
-        giftTiming,
-      }),
+      JSON.stringify(gift),
     );
 
     router.push("/gift-confirmed?type=custom");
@@ -74,7 +81,6 @@ export default function CustomGiftPage() {
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center justify-center">
         <div className="w-full">
-
           <Link
             href="/wishlist"
             className="mb-8 inline-block text-sm text-[#4169e1] transition hover:text-[#3157c7] dark:text-[#e9a6b5] dark:hover:text-white"
@@ -83,7 +89,6 @@ export default function CustomGiftPage() {
           </Link>
 
           <div className="rounded-3xl border border-[#f0cbd3] bg-white p-7 shadow-sm dark:border-[#294274] dark:bg-[#10285c] sm:p-9">
-
             <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
               Your Choice
             </p>
@@ -98,7 +103,6 @@ export default function CustomGiftPage() {
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-
               <div>
                 <label
                   htmlFor="description"
@@ -155,6 +159,7 @@ export default function CustomGiftPage() {
                   className="mb-2 block text-sm font-medium text-[#172554] dark:text-white"
                 >
                   Phone Number
+
                   <span className="ml-1 font-normal text-[#64748b]">
                     (Optional)
                   </span>
@@ -187,12 +192,15 @@ export default function CustomGiftPage() {
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white"
                 >
                   <option value="">Select an option</option>
+
                   <option value="Before the wedding">
                     Before the wedding
                   </option>
+
                   <option value="On the wedding day">
                     On the wedding day
                   </option>
+
                   <option value="After the wedding">
                     After the wedding
                   </option>
@@ -212,10 +220,8 @@ export default function CustomGiftPage() {
               >
                 {isSubmitting ? "Processing..." : "Continue"}
               </button>
-
             </form>
           </div>
-
         </div>
       </div>
     </main>
