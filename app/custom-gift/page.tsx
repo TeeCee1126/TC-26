@@ -206,7 +206,22 @@ export default function CustomGiftPage() {
                   </option>
                 </select>
               </div>
+<div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-4 dark:border-[#294274] dark:bg-[#0b1f4d]">
+  <p className="text-sm font-medium text-[#172554] dark:text-white">
+    Delivery Information
+  </p>
 
+  <p className="mt-2 text-sm leading-6 text-[#475569] dark:text-slate-300">
+    For delivery arrangements, please reach out to the groom on{" "}
+    <a
+      href="tel:07068364743"
+      className="font-medium text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
+    >
+      07068364743
+    </a>
+    .
+  </p>
+</div>
               {error && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">
                   {error}

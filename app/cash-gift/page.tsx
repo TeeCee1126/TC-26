@@ -27,20 +27,19 @@ export default function CashGiftPage() {
     const trimmedPhone = phone.trim();
     const trimmedAmount = amount.trim();
 
-    if (!trimmedAmount) {
-      setError("Please enter the amount you would like to give.");
+    if (!anonymous && !trimmedName) {
+      setError("Please enter your name or choose the anonymous option.");
       return;
     }
 
     const numericAmount = Number(trimmedAmount);
 
-    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-      setError("Please enter a valid gift amount greater than ₦0.");
-      return;
-    }
-
-    if (!anonymous && !trimmedName) {
-      setError("Please enter your name or choose the anonymous option.");
+    if (
+      !trimmedAmount ||
+      Number.isNaN(numericAmount) ||
+      numericAmount <= 0
+    ) {
+      setError("Please enter a valid cash gift amount.");
       return;
     }
 
@@ -97,16 +96,16 @@ export default function CashGiftPage() {
 
           <div className="rounded-3xl border border-[#f0cbd3] bg-white p-7 shadow-sm dark:border-[#294274] dark:bg-[#10285c] sm:p-9">
             <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
-              Monetary Gift
+              Cash Gift
             </p>
 
             <h1 className="mt-3 font-serif text-3xl text-[#172554] dark:text-white sm:text-4xl">
-              Cash Gift
+              Give a Cash Gift
             </h1>
 
             <p className="mt-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
-              If you would like to bless Christianah and Theophilus with a
-              monetary gift, please provide the details below.
+              If you would prefer to give a cash gift, you can record
+              your intended gift below.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -118,8 +117,8 @@ export default function CashGiftPage() {
                   Gift Amount
                 </label>
 
-                <div className="flex overflow-hidden rounded-xl border border-[#f0cbd3] bg-white focus-within:border-[#4169e1] dark:border-[#294274] dark:bg-[#0b1f4d]">
-                  <span className="flex items-center px-4 text-sm text-[#64748b]">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#64748b]">
                     ₦
                   </span>
 
@@ -129,10 +128,12 @@ export default function CashGiftPage() {
                     min="1"
                     step="1"
                     value={amount}
-                    onChange={(event) => setAmount(event.target.value)}
+                    onChange={(event) =>
+                      setAmount(event.target.value)
+                    }
                     disabled={isSubmitting}
                     placeholder="Enter amount"
-                    className="w-full bg-transparent px-2 py-3 text-sm text-[#172554] outline-none dark:text-white"
+                    className="w-full rounded-xl border border-[#f0cbd3] bg-white py-3 pl-9 pr-4 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white dark:disabled:bg-[#16346f]"
                   />
                 </div>
               </div>
@@ -160,7 +161,9 @@ export default function CashGiftPage() {
                 <input
                   type="checkbox"
                   checked={anonymous}
-                  onChange={(event) => setAnonymous(event.target.checked)}
+                  onChange={(event) =>
+                    setAnonymous(event.target.checked)
+                  }
                   disabled={isSubmitting}
                   className="h-4 w-4 accent-[#4169e1]"
                 />
@@ -202,7 +205,9 @@ export default function CashGiftPage() {
                 <select
                   id="giftTiming"
                   value={giftTiming}
-                  onChange={(event) => setGiftTiming(event.target.value)}
+                  onChange={(event) =>
+                    setGiftTiming(event.target.value)
+                  }
                   disabled={isSubmitting}
                   className="w-full rounded-xl border border-[#f0cbd3] bg-white px-4 py-3 text-sm text-[#172554] outline-none transition focus:border-[#4169e1] disabled:cursor-not-allowed dark:border-[#294274] dark:bg-[#0b1f4d] dark:text-white"
                 >
@@ -221,7 +226,67 @@ export default function CashGiftPage() {
                   </option>
                 </select>
               </div>
+<div className="rounded-2xl border border-[#f0cbd3] bg-[#fff4f6] px-4 py-5 dark:border-[#294274] dark:bg-[#0b1f4d]">
+  <p className="text-sm font-medium text-[#172554] dark:text-white">
+    Cash Gift Payment Details
+  </p>
 
+  <div className="mt-4 space-y-4 text-sm leading-6 text-[#475569] dark:text-slate-300">
+    <div>
+      <p className="font-medium text-[#172554] dark:text-white">
+        GTBank
+      </p>
+
+      <p>
+        Account Number:{" "}
+        <span className="font-medium">
+          0261338693
+        </span>
+      </p>
+
+      <p>
+        Account Name:{" "}
+        <span className="font-medium">
+          Olutoye Abiodun Theophilus
+        </span>
+      </p>
+    </div>
+
+    <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
+      <p className="font-medium text-[#172554] dark:text-white">
+        OPay
+      </p>
+
+      <p>
+        Account Number:{" "}
+        <span className="font-medium">
+          7068364743
+        </span>
+      </p>
+
+      <p>
+        Account Name:{" "}
+        <span className="font-medium">
+          Abiodun Olutoye
+        </span>
+      </p>
+    </div>
+
+    <div className="border-t border-[#f0cbd3] pt-4 dark:border-[#294274]">
+      <p className="font-medium text-[#172554] dark:text-white">
+        Transfer Description
+      </p>
+
+      <p>
+        Please use{" "}
+        <span className="font-medium text-[#4169e1] dark:text-[#e9a6b5]">
+          Wedding gift
+        </span>{" "}
+        as the transfer description.
+      </p>
+    </div>
+  </div>
+</div>
               {error && (
                 <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-300">
                   {error}
@@ -233,7 +298,7 @@ export default function CashGiftPage() {
                 disabled={isSubmitting}
                 className="w-full rounded-full bg-[#4169e1] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[#3157c7] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Processing..." : "Continue"}
+                {isSubmitting ? "Processing..." : "Confirm Cash Gift"}
               </button>
             </form>
           </div>
