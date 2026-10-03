@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -95,7 +95,7 @@ const wishlistItems = [
   },
 ];
 
-export default function WishlistPage() {
+function WishlistContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -126,7 +126,6 @@ export default function WishlistPage() {
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto max-w-6xl">
-
         <div className="mb-12 text-center">
           <Link
             href="/"
@@ -184,7 +183,6 @@ export default function WishlistPage() {
         </div>
 
         <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-2">
-
           <div className="rounded-2xl border border-[#f0cbd3] bg-white p-6 text-center shadow-sm dark:border-[#294274] dark:bg-[#10285c]">
             <p className="text-xs uppercase tracking-[0.25em] text-[#4169e1] dark:text-[#e9a6b5]">
               Monetary Gift
@@ -228,7 +226,6 @@ export default function WishlistPage() {
               Give a Custom Gift
             </Link>
           </div>
-
         </div>
 
         {isAttendee && (
@@ -251,8 +248,15 @@ export default function WishlistPage() {
         <p className="mt-10 text-center text-xs leading-5 text-[#64748b] dark:text-slate-500">
           You do not need to attend the wedding to give a gift.
         </p>
-
       </div>
     </main>
+  );
+}
+
+export default function WishlistPage() {
+  return (
+    <Suspense fallback={null}>
+      <WishlistContent />
+    </Suspense>
   );
 }
