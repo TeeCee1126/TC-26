@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { connectToDatabase } from "@/lib/mongodb";
 import Guest from "@/lib/models/Guest";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +14,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Name, phone number and number attending are required.",
+          message:
+            "Name, phone number and number attending are required.",
         },
         {
           status: 400,
@@ -55,6 +57,20 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    const authenticated = await isAdminAuthenticated();
+
+    if (!authenticated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        {
+          status: 401,
+        },
+      );
+    }
+
     await connectToDatabase();
 
     const guests = await Guest.find()

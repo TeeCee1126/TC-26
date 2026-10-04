@@ -2,8 +2,13 @@ import { NextResponse } from "next/server";
 
 import { connectToDatabase } from "@/lib/mongodb";
 import Gift from "@/lib/models/Gift";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
-const validGiftTypes = ["physical", "cash", "custom"];
+const validGiftTypes = [
+  "physical",
+  "cash",
+  "custom",
+];
 
 const validGiftStatuses = [
   "pending",
@@ -32,7 +37,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Gift type, name and gift timing are required.",
+          message:
+            "Gift type, name and gift timing are required.",
         },
         {
           status: 400,
@@ -92,6 +98,20 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    const authenticated = await isAdminAuthenticated();
+
+    if (!authenticated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        {
+          status: 401,
+        },
+      );
+    }
+
     await connectToDatabase();
 
     const gifts = await Gift.find()
@@ -119,6 +139,20 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
+    const authenticated = await isAdminAuthenticated();
+
+    if (!authenticated) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized.",
+        },
+        {
+          status: 401,
+        },
+      );
+    }
+
     const body = await request.json();
 
     const { id, status } = body;
