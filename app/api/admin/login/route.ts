@@ -2,13 +2,27 @@ import { NextResponse } from "next/server";
 
 import { ADMIN_SESSION_COOKIE } from "@/lib/admin-auth";
 
-const ADMIN_PASSWORD = "TC26ADMIN";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     const { password } = body;
+
+    if (!ADMIN_PASSWORD) {
+      console.error("ADMIN_PASSWORD environment variable is missing.");
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Admin authentication is not configured.",
+        },
+        {
+          status: 500,
+        },
+      );
+    }
 
     if (!password) {
       return NextResponse.json(
