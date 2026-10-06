@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 
 import { GuestRecord } from "@/lib/guest";
 
+type SavedGuest = GuestRecord & {
+  accessCode: string;
+};
+
 export default function ConfirmPage() {
   const router = useRouter();
 
@@ -16,7 +20,6 @@ export default function ConfirmPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     setError("");
 
     const trimmedName = name.trim();
@@ -45,13 +48,6 @@ export default function ConfirmPage() {
 
     setIsSubmitting(true);
 
-    const guest: GuestRecord = {
-      name: trimmedName,
-      phone: normalisedPhone,
-      numberAttending: attending,
-      createdAt: new Date().toISOString(),
-    };
-
     try {
       const response = await fetch("/api/guests", {
         method: "POST",
@@ -76,14 +72,31 @@ export default function ConfirmPage() {
         return;
       }
 
-      // Keep the guest details available for the current invitation flow.
+      if (!data.guest?.accessCode) {
+        setError(
+          "Your attendance was saved, but your access code could not be generated. Please try again.",
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      const savedGuest: SavedGuest = {
+        name: data.guest.name,
+        phone: data.guest.phone,
+        numberAttending: data.guest.numberAttending,
+        accessCode: data.guest.accessCode,
+        createdAt: data.guest.createdAt,
+      };
+
       sessionStorage.setItem(
         "weddingGuest",
-        JSON.stringify(guest),
+        JSON.stringify(savedGuest),
       );
 
-      // Keep localStorage temporarily while the admin section
-      // is being migrated to MongoDB.
+      sessionStorage.setItem(
+        "weddingAccessCode",
+        data.guest.accessCode,
+      );
 
       router.push("/wishlist?from=confirm");
     } catch (error) {

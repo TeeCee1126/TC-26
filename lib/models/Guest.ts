@@ -4,6 +4,7 @@ export type GuestDocument = {
   name: string;
   phone: string;
   numberAttending: number;
+  accessCode: string;
   createdAt: Date;
 };
 
@@ -26,6 +27,13 @@ const GuestSchema = new Schema<GuestDocument>(
       required: true,
       min: 1,
       max: 10,
+    },
+
+    accessCode: {
+      type: String,
+      trim: true,
+      unique: true,
+      sparse: true,
     },
 
     createdAt: {

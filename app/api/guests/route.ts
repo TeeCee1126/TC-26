@@ -1,13 +1,28 @@
+import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 
 import { connectToDatabase } from "@/lib/mongodb";
 import Guest from "@/lib/models/Guest";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
+async function generateAccessCode() {
+  let accessCode = "";
+
+  do {
+    const randomPart = randomBytes(4)
+      .toString("hex")
+      .toUpperCase()
+      .slice(0, 5);
+
+    accessCode = `TC${randomPart}`;
+  } while (await Guest.exists({ accessCode }));
+
+  return accessCode;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
     const { name, phone, numberAttending } = body;
 
     if (!name || !phone || !numberAttending) {
@@ -17,18 +32,31 @@ export async function POST(request: Request) {
           message:
             "Name, phone number and number attending are required.",
         },
+        { status: 400 },
+      );
+    }
+
+    const attending = Number(numberAttending);
+
+    if (!Number.isInteger(attending) || attending < 1 || attending > 10) {
+      return NextResponse.json(
         {
-          status: 400,
+          success: false,
+          message: "Number attending must be between 1 and 10.",
         },
+        { status: 400 },
       );
     }
 
     await connectToDatabase();
 
+    const accessCode = await generateAccessCode();
+
     const guest = await Guest.create({
-      name,
-      phone,
-      numberAttending,
+      name: String(name).trim(),
+      phone: String(phone).trim(),
+      numberAttending: attending,
+      accessCode,
     });
 
     return NextResponse.json(
@@ -36,9 +64,7 @@ export async function POST(request: Request) {
         success: true,
         guest,
       },
-      {
-        status: 201,
-      },
+      { status: 201 },
     );
   } catch (error) {
     console.error("Guest creation error:", error);
@@ -48,9 +74,7 @@ export async function POST(request: Request) {
         success: false,
         message: "Failed to save guest.",
       },
-      {
-        status: 500,
-      },
+      { status: 500 },
     );
   }
 }
@@ -65,9 +89,7 @@ export async function GET() {
           success: false,
           message: "Unauthorized.",
         },
-        {
-          status: 401,
-        },
+        { status: 401 },
       );
     }
 
@@ -89,9 +111,7 @@ export async function GET() {
         success: false,
         message: "Failed to retrieve guests.",
       },
-      {
-        status: 500,
-      },
+      { status: 500 },
     );
   }
 }

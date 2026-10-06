@@ -8,13 +8,13 @@ type Guest = {
   name: string;
   phone: string;
   numberAttending: number;
+  accessCode: string;
 };
 
 export default function AccessCodePage() {
   const router = useRouter();
 
   const [guest, setGuest] = useState<Guest | null>(null);
-  const [accessCode, setAccessCode] = useState("");
 
   useEffect(() => {
     const savedGuest = sessionStorage.getItem("weddingGuest");
@@ -24,23 +24,18 @@ export default function AccessCodePage() {
       return;
     }
 
-    const parsedGuest = JSON.parse(savedGuest);
-    setGuest(parsedGuest);
+    try {
+      const parsedGuest = JSON.parse(savedGuest);
 
-    let savedCode = sessionStorage.getItem("weddingAccessCode");
+      if (!parsedGuest.accessCode) {
+        router.replace("/");
+        return;
+      }
 
-    if (!savedCode) {
-      const randomPart = Math.random()
-        .toString(36)
-        .substring(2, 7)
-        .toUpperCase();
-
-      savedCode = `TC${randomPart}`;
-
-      sessionStorage.setItem("weddingAccessCode", savedCode);
+      setGuest(parsedGuest);
+    } catch {
+      router.replace("/");
     }
-
-    setAccessCode(savedCode);
   }, [router]);
 
   if (!guest) {
@@ -69,18 +64,13 @@ export default function AccessCodePage() {
             </p>
 
             <p className="mt-5 text-4xl font-semibold tracking-[0.3em] text-[#172554] dark:text-white">
-              {accessCode}
+              {guest.accessCode}
             </p>
 
             <p className="mt-5 text-sm leading-6 text-slate-500 dark:text-slate-300">
               Please keep this code safe. It may be used to access your
               invitation details later.
             </p>
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-[#f0cbd3] bg-[#fff0f3] px-5 py-4 text-sm leading-6 text-slate-600 dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
-            This code is currently stored privately in your browser. We will
-            connect it to your invitation record when the database is added.
           </div>
 
           <Link

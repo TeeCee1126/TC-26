@@ -8,6 +8,7 @@ type GuestRecord = {
   name: string;
   phone: string;
   numberAttending: number;
+  accessCode?: string;
   createdAt: string;
 };
 
@@ -153,7 +154,7 @@ export default function AdminGuestsPage() {
         ) : (
           <div className="overflow-hidden rounded-2xl border border-[#F0CBD3] bg-white shadow-sm dark:border-[#294274] dark:bg-[#10285C]">
             <div className="overflow-x-auto">
-              <table className="min-w-[850px] w-full text-left">
+              <table className="min-w-[980px] w-full text-left">
                 <thead className="border-b border-[#F0CBD3] bg-[#FFF4F6] dark:border-[#294274] dark:bg-[#0B1F4D]">
                   <tr>
                     <th className="px-5 py-4 text-sm font-semibold text-[#172554] dark:text-white">
@@ -166,6 +167,10 @@ export default function AdminGuestsPage() {
 
                     <th className="px-5 py-4 text-sm font-semibold text-[#172554] dark:text-white">
                       Number Attending
+                    </th>
+
+                    <th className="px-5 py-4 text-sm font-semibold text-[#172554] dark:text-white">
+                      Access Code
                     </th>
 
                     <th className="px-5 py-4 text-sm font-semibold text-[#172554] dark:text-white">
@@ -194,6 +199,18 @@ export default function AdminGuestsPage() {
                         <span className="inline-flex rounded-full bg-[#E9A6B5]/20 px-3 py-1 text-xs font-medium text-[#172554] dark:text-pink-200">
                           {guest.numberAttending}
                         </span>
+                      </td>
+
+                      <td className="px-5 py-5">
+                        {guest.accessCode ? (
+                          <span className="inline-flex rounded-lg bg-[#4169E1]/10 px-3 py-1.5 font-mono text-sm font-semibold tracking-wider text-[#4169E1] dark:bg-[#4169E1]/20 dark:text-[#E9A6B5]">
+                            {guest.accessCode}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-slate-400 dark:text-slate-500">
+                            Not available
+                          </span>
+                        )}
                       </td>
 
                       <td className="whitespace-nowrap px-5 py-5 text-sm text-slate-600 dark:text-slate-300">
