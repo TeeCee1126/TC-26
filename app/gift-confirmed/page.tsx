@@ -70,6 +70,9 @@ function GiftConfirmedContent() {
         ? "Cash Gift"
         : "Custom Gift";
 
+  const needsDeliveryDetails =
+    gift.type === "physical" || gift.type === "custom";
+
   return (
     <main className="min-h-screen bg-[#fff4f6] px-6 py-12 text-[#172554] transition-colors duration-200 dark:bg-[#0b1f4d] dark:text-slate-200">
       <div className="mx-auto flex min-h-[90vh] w-full max-w-lg items-center justify-center text-center">
@@ -151,6 +154,25 @@ function GiftConfirmedContent() {
               </p>
             </div>
           </div>
+
+          {needsDeliveryDetails && (
+            <div className="mx-auto mt-6 max-w-sm rounded-xl border border-[#f0cbd3] bg-[#fff0f3] px-5 py-4 text-left text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
+              <p className="font-medium text-[#172554] dark:text-white">
+                Delivery Arrangements
+              </p>
+
+              <p className="mt-2">
+                For delivery arrangements, please reach out to the groom on{" "}
+                <a
+                  href="tel:07068364743"
+                  className="font-semibold text-[#4169e1] hover:underline dark:text-[#e9a6b5]"
+                >
+                  07068364743
+                </a>
+                .
+              </p>
+            </div>
+          )}
 
           <div className="mx-auto mt-6 max-w-sm rounded-xl border border-[#f0cbd3] bg-white/70 px-4 py-4 text-left text-sm leading-6 text-[#475569] dark:border-[#294274] dark:bg-[#10285c] dark:text-slate-300">
             <span className="font-medium text-[#172554] dark:text-white">
