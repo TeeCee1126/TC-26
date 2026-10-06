@@ -71,6 +71,18 @@ export default function AdminGuestsPage() {
   return (
     <main className="min-h-screen px-5 py-10 sm:px-8">
       <div className="mx-auto max-w-6xl">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => router.push("/admin")}
+            className="inline-flex items-center gap-2 rounded-xl border border-[#F0CBD3] bg-white px-4 py-2 text-sm font-medium text-[#172554] shadow-sm transition hover:bg-[#FFF4F6] dark:border-[#294274] dark:bg-[#10285C] dark:text-white dark:hover:bg-[#0B1F4D]"
+          >
+            <span aria-hidden="true">←</span>
+            Back to Dashboard
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#4169E1]">
